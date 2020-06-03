@@ -1,0 +1,45 @@
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    width: 100vw;
+    background-color: #282c34;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+#title {
+    margin-bottom: 2em;
+    color: #fff;
+}
+
+.game-container__grid {
+    display: flex;
+    width: 200px;
+    height: 400px;
+    background-color: #3f4044;
+    flex-wrap: wrap;
+}
+
+.game-container__square {
+    width: 20px;
+    height: 20px;
+    border: 1px solid rgba(0, 0, 0, 0.507);
+    background: rgb(110, 23, 23);
+}
+
+.painted {
+    background-color: black;
+}
