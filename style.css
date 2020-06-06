@@ -49,6 +49,6 @@ body {
     background-color: black;
 }
 
-.test {
-    background-color: green;
+#score-points {
+    color: #fff;
 }

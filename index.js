@@ -12,6 +12,7 @@ let currentIdentifier = tetrominoes[random];
 let current = currentIdentifier.rotation[currentRotation];
 
 const title = document.querySelector('#title');
+const points = document.querySelector('#points');
 
 //create 200 divs inside the game container
 for (let i = 0; i < 210; i++) {
@@ -185,6 +186,7 @@ function moveDown() {
         currentPosition += width;
         draw();
         boundary();
+        updatePoints(2);
     } else boundary();
 }
 
@@ -203,7 +205,7 @@ function rotate() {
 }
 
 //need to refactor to move the tetrominoe when a left would go farther than the limit
-//needs to check for collisions
+//needs to check for collisions check left lower, right lower pixel
 function moveLeft() {
     if (
         !tetrominoDrawIndex.some((tetro) =>
@@ -247,13 +249,21 @@ for (let i = 0; i < 200; i++) {
         linesHelper.push(squares[i]);
     }
 }
+let score = 0;
 
+function updatePoints(point) {
+    score += point;
+    points.textContent = String(score);
+}
+
+// sometimes it leaves an extra pixel
 function clearLine() {
     lines.forEach((line, lineIndex) => {
         if (line.every((square) => square.classList.contains('set'))) {
             line.forEach((square) => {
                 square.classList.remove('set');
             });
+            updatePoints(100);
             for (let i = lineIndex - 1; i >= 0; i--) {
                 lines[i].forEach((square, squareIndex) => {
                     if (square.classList.contains('set')) {
