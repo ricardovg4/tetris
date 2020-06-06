@@ -2,14 +2,16 @@
 
 // grid initialization
 const gameGrid = document.querySelector('.game-container__grid');
-const title = document.querySelector('#title');
-let currentPosition = 4;
-let currentRotation = 0;
 const width = 10;
 const height = 20;
+
+let currentPosition = 4;
+let currentRotation = 0;
 let random = Math.floor(Math.random() * tetrominoes.length);
 let currentIdentifier = tetrominoes[random];
 let current = currentIdentifier.rotation[currentRotation];
+
+const title = document.querySelector('#title');
 
 //create 200 divs inside the game container
 for (let i = 0; i < 210; i++) {
@@ -158,12 +160,13 @@ function boundary() {
     ) {
         tetrominoDraw.forEach((tetro) => {
             tetro.classList.add('set');
-            dropTetromino();
+            tetro.classList.remove('painted');
         });
-    }
+        dropTetromino();
+        clearLine();
+    } else return false;
 }
 
-function moveHorizontally() {}
 function control(e) {
     if (e.keyCode === 37) {
         moveLeft();
@@ -171,9 +174,18 @@ function control(e) {
         rotate();
     } else if (e.keyCode === 39) {
         moveRight();
-        // } else if (e.keyCode === 40) {
-        //   moveDown()
+    } else if (e.keyCode === 40) {
+        moveDown();
     }
+}
+
+function moveDown() {
+    if (!boundary()) {
+        undraw();
+        currentPosition += width;
+        draw();
+        boundary();
+    } else boundary();
 }
 
 function rotate() {
@@ -220,6 +232,41 @@ function moveRight() {
     }
 }
 
-document.addEventListener('keydown', control);
+// create subarrays of lines to use with the clearLine function
+let lines = [];
+let linesHelper = [];
 
-const game = setInterval(gravity, 200);
+for (let i = 0; i < 200; i++) {
+    if (String(i).endsWith('0')) {
+        linesHelper = [];
+        linesHelper.push(squares[i]);
+    } else if (String(i).endsWith('9')) {
+        linesHelper.push(squares[i]);
+        lines.push(linesHelper);
+    } else {
+        linesHelper.push(squares[i]);
+    }
+}
+
+function clearLine() {
+    lines.forEach((line, lineIndex) => {
+        if (line.every((square) => square.classList.contains('set'))) {
+            line.forEach((square) => {
+                square.classList.remove('set');
+            });
+            for (let i = lineIndex - 1; i >= 0; i--) {
+                lines[i].forEach((square, squareIndex) => {
+                    if (square.classList.contains('set')) {
+                        square.classList.remove('set');
+                        lines[i + 1][squareIndex].classList.add('set');
+                    }
+                });
+            }
+        }
+    });
+}
+
+document.addEventListener('keydown', control);
+let time = 300;
+
+let game = setInterval(gravity, time);
