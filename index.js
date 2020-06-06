@@ -2,6 +2,7 @@
 
 // grid initialization
 const gameGrid = document.querySelector('.game-container__grid');
+const title = document.querySelector('#title');
 let currentPosition = 4;
 let currentRotation = 0;
 const width = 10;
@@ -31,6 +32,7 @@ let tetrominoRenderIndex = [];
 
 //helper function to change the tetrominoRender if the tetromino is I which occupies an area of 16 instead of 9
 function renderHelper() {
+    // there is a problem in the render as the first line may be blank if the object is in rotation 0 and the first 3 pixels are empty, basically drawing the whole space of 6 instead of just the required fields
     if (currentIdentifier.tetromino === 'i') {
         tetrominoRenderIndex = [
             currentPosition,
@@ -96,12 +98,15 @@ function renderHelper() {
 
 function dropTetromino() {
     random = Math.floor(Math.random() * tetrominoes.length);
+    currentIdentifier = tetrominoes[random];
     currentPosition = 4;
     currentRotation = 0;
+    current = currentIdentifier.rotation[currentRotation];
 }
 
 let tetrominoDraw;
 let tetrominoDrawIndex;
+
 function draw() {
     renderHelper();
     tetrominoDraw = [];
@@ -128,7 +133,21 @@ function gravity() {
     undraw();
     currentPosition += width;
     draw();
+    gameOver();
     boundary();
+}
+
+function gameOver() {
+    if (
+        tetrominoDrawIndex.some((tetro) =>
+            squares[tetro].classList.contains('set')
+        ) &&
+        currentPosition < 20
+    ) {
+        clearInterval(game);
+        title.textContent = 'GAME OVER';
+        title.style.fontSize = '4em';
+    }
 }
 
 function boundary() {
@@ -144,4 +163,63 @@ function boundary() {
     }
 }
 
-setInterval(gravity, 100);
+function moveHorizontally() {}
+function control(e) {
+    if (e.keyCode === 37) {
+        moveLeft();
+    } else if (e.keyCode === 38) {
+        rotate();
+    } else if (e.keyCode === 39) {
+        moveRight();
+        // } else if (e.keyCode === 40) {
+        //   moveDown()
+    }
+}
+
+function rotate() {
+    if (currentRotation < 3) {
+        undraw();
+        currentRotation++;
+        current = currentIdentifier.rotation[currentRotation];
+        draw();
+    } else if (currentRotation == 3) {
+        undraw();
+        currentRotation--;
+        current = currentIdentifier.rotation[currentRotation];
+        draw();
+    }
+}
+
+//need to refactor to move the tetrominoe when a left would go farther than the limit
+//needs to check for collisions
+function moveLeft() {
+    if (
+        !tetrominoDrawIndex.some((tetro) =>
+            squares[tetro - 1].classList.contains('set')
+        )
+    ) {
+        if (!tetrominoDrawIndex.some((tetro) => String(tetro).endsWith('0'))) {
+            undraw();
+            currentPosition--;
+            draw();
+        }
+    }
+}
+
+function moveRight() {
+    if (
+        !tetrominoDrawIndex.some((tetro) =>
+            squares[tetro - 1].classList.contains('set')
+        )
+    ) {
+        if (!tetrominoDrawIndex.some((tetro) => String(tetro).endsWith('9'))) {
+            undraw();
+            currentPosition++;
+            draw();
+        }
+    }
+}
+
+document.addEventListener('keydown', control);
+
+const game = setInterval(gravity, 200);
