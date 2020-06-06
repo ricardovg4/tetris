@@ -31,6 +31,7 @@ body {
     height: 400px;
     background-color: #3f4044;
     flex-wrap: wrap;
+    overflow: hidden;
 }
 
 .game-container__square {
@@ -42,4 +43,12 @@ body {
 
 .painted {
     background-color: black;
+}
+
+.set {
+    background-color: black;
+}
+
+.test {
+    background-color: green;
 }
