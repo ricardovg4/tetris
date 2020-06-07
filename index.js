@@ -190,27 +190,40 @@ function moveDown() {
     } else boundary();
 }
 
+let currentRotationStatus = 'asc';
 function rotate() {
-    if (currentRotation < 3) {
-        undraw();
-        currentRotation++;
-        current = currentIdentifier.rotation[currentRotation];
-        draw();
-    } else if (currentRotation == 3) {
-        undraw();
-        currentRotation--;
-        current = currentIdentifier.rotation[currentRotation];
-        draw();
+    switch (currentRotation) {
+        case 3:
+            currentRotationStatus = 'desc';
+            break;
+        case 0:
+            currentRotationStatus = 'asc';
+            break;
+    }
+    switch (currentRotationStatus) {
+        case 'asc':
+            undraw();
+            currentRotation++;
+            current = currentIdentifier.rotation[currentRotation];
+            draw();
+            break;
+        case 'desc':
+            undraw();
+            currentRotation--;
+            current = currentIdentifier.rotation[currentRotation];
+            draw();
+            break;
     }
 }
 
-//need to refactor to move the tetrominoe when a left would go farther than the limit
-//needs to check for collisions check left lower, right lower pixel
 function moveLeft() {
     if (
-        !tetrominoDrawIndex.some((tetro) =>
-            squares[tetro - 1].classList.contains('set')
-        )
+        !tetrominoDrawIndex.some((tetro) => {
+            return (
+                squares[tetro - 1 + width].classList.contains('set') ||
+                squares[tetro - 1].classList.contains('set')
+            );
+        })
     ) {
         if (!tetrominoDrawIndex.some((tetro) => String(tetro).endsWith('0'))) {
             undraw();
@@ -222,9 +235,12 @@ function moveLeft() {
 
 function moveRight() {
     if (
-        !tetrominoDrawIndex.some((tetro) =>
-            squares[tetro - 1].classList.contains('set')
-        )
+        !tetrominoDrawIndex.some((tetro) => {
+            return (
+                squares[tetro + 1 + width].classList.contains('set') ||
+                squares[tetro + 1].classList.contains('set')
+            );
+        })
     ) {
         if (!tetrominoDrawIndex.some((tetro) => String(tetro).endsWith('9'))) {
             undraw();
