@@ -61,3 +61,14 @@ body {
     padding: 0.7em;
     margin-bottom: 1em;
 }
+
+.instructions {
+    margin: 2em;
+    width: 30em;
+}
+
+.instructions > p {
+    color: rgb(179, 179, 179);
+    line-height: 1.5em;
+    text-align: center;
+}
