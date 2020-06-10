@@ -54,3 +54,10 @@ body {
 #score-points {
     color: #fff;
 }
+
+#reload {
+    background-color: rgb(216, 214, 214);
+    border: none;
+    padding: 0.7em;
+    margin-bottom: 1em;
+}

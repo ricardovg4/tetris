@@ -13,6 +13,7 @@ let current = currentIdentifier.rotation[currentRotation];
 
 const title = document.querySelector('#title');
 const points = document.querySelector('#points');
+const tryAgain = document.querySelector('#reload');
 
 //create 200 divs inside the game container
 for (let i = 0; i < 210; i++) {
@@ -145,7 +146,8 @@ function gameOver() {
     ) {
         clearInterval(game);
         title.textContent = 'GAME OVER';
-        title.style.fontSize = '4em';
+        title.style.fontSize = '3em';
+        title.style.marginBottom = '1em';
     }
 }
 
@@ -317,6 +319,31 @@ function clearLine() {
 }
 
 document.addEventListener('keydown', control);
-let time = 300;
 
-let game = setInterval(gravity, time);
+tryAgain.addEventListener('click', reload);
+
+function reload() {
+    clearInterval(game);
+    squares.forEach((square) => {
+        square.classList.remove('painted');
+    });
+    for (let i = 0; i < 200; i++) {
+        squares[i].classList.remove('set');
+    }
+    score = 0;
+    updatePoints(0);
+    startGame();
+}
+
+let time = 300;
+let game;
+function startGame() {
+    game = setInterval(gravity, time);
+    currentPosition = 4;
+    currentRotation = 0;
+    random = Math.floor(Math.random() * tetrominoes.length);
+    currentIdentifier = tetrominoes[random];
+    current = currentIdentifier.rotation[currentRotation];
+}
+
+startGame();
