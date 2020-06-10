@@ -25,9 +25,7 @@ for (let i = 0; i < 210; i++) {
 }
 
 //grab the 200 squares in the array in a manageable array
-const squares = Array.from(
-    document.querySelectorAll('.game-container__square')
-);
+const squares = Array.from(document.querySelectorAll('.game-container__square'));
 
 //variable that manages how to render the tetrominoes in the grid
 let tetrominoRender = [];
@@ -142,9 +140,7 @@ function gravity() {
 
 function gameOver() {
     if (
-        tetrominoDrawIndex.some((tetro) =>
-            squares[tetro].classList.contains('set')
-        ) &&
+        tetrominoDrawIndex.some((tetro) => squares[tetro].classList.contains('set')) &&
         currentPosition < 20
     ) {
         clearInterval(game);
@@ -154,11 +150,7 @@ function gameOver() {
 }
 
 function boundary() {
-    if (
-        tetrominoDrawIndex.some((tetro) =>
-            squares[tetro + width].classList.contains('set')
-        )
-    ) {
+    if (tetrominoDrawIndex.some((tetro) => squares[tetro + width].classList.contains('set'))) {
         tetrominoDraw.forEach((tetro) => {
             tetro.classList.add('set');
             tetro.classList.remove('painted');
@@ -190,6 +182,27 @@ function moveDown() {
     } else boundary();
 }
 
+//helper function to check if the drawn tetrominoe is ocupying both edges of the grid, if draws the last rotation, a little dirty but works
+function returnDraw(sign) {
+    let execute;
+    tetrominoDrawIndex.forEach((tetro, index) => {
+        if (String(tetro).endsWith('0') || String(tetro).endsWith('9')) {
+            let otherValue = String(tetrominoDrawIndex[index]).endsWith('0') ? 9 : 0;
+            for (let i = index++; i < tetrominoDrawIndex.length; i++) {
+                if (String(tetrominoDrawIndex[i]).endsWith(otherValue)) {
+                    execute = true;
+                }
+            }
+        }
+    });
+    if (execute) {
+        undraw();
+        currentRotation = sign === 'asc' ? currentRotation - 1 : currentRotation + 1;
+        current = currentIdentifier.rotation[currentRotation];
+        draw();
+    }
+}
+
 let currentRotationStatus = 'asc';
 function rotate() {
     switch (currentRotation) {
@@ -206,12 +219,14 @@ function rotate() {
             currentRotation++;
             current = currentIdentifier.rotation[currentRotation];
             draw();
+            returnDraw('asc');
             break;
         case 'desc':
             undraw();
             currentRotation--;
             current = currentIdentifier.rotation[currentRotation];
             draw();
+            returnDraw('desc');
             break;
     }
 }
