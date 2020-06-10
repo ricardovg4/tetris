@@ -150,16 +150,23 @@ function gameOver() {
 }
 
 function boundary() {
-    if (tetrominoDrawIndex.some((tetro) => squares[tetro + width].classList.contains('set'))) {
+    if (
+        tetrominoDrawIndex.some(
+            (tetro) =>
+                squares[tetro + width].classList.contains('set') ||
+                squares[tetro].classList.contains('set')
+        )
+    ) {
         tetrominoDraw.forEach((tetro) => {
             tetro.classList.add('set');
             tetro.classList.remove('painted');
         });
-        dropTetromino();
         clearLine();
+        dropTetromino();
     } else return false;
 }
 
+//checks the key code pressed on the event listener
 function control(e) {
     if (e.keyCode === 37) {
         moveLeft();
@@ -173,13 +180,15 @@ function control(e) {
 }
 
 function moveDown() {
-    if (!boundary()) {
-        undraw();
-        currentPosition += width;
-        draw();
-        boundary();
-        updatePoints(2);
-    } else boundary();
+    if (!tetrominoDrawIndex.some((tetro) => squares[tetro + width].classList.contains('set'))) {
+        if (!boundary()) {
+            undraw();
+            currentPosition += width;
+            draw();
+            boundary();
+            updatePoints(2);
+        } else boundary();
+    }
 }
 
 //helper function to check if the drawn tetrominoe is ocupying both edges of the grid, if draws the last rotation, a little dirty but works
